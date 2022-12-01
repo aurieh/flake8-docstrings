@@ -93,6 +93,19 @@ class pep257Checker:
                 "The default is not ignore any decorated functions. "
             ),
         )
+        parser.add_option(
+            "--property-decorators",
+            action="store",
+            parse_from_config=True,
+            default="property,cached_property,functools.cached_property",
+            help=(
+                "pydocstyle property-decorators, default 'property,"
+                "cached_property,functools.cached_property'. Consider "
+                "any method decorated with one of these decorators as a "
+                "property, and consequently allow a docstring which is not "
+                "in imperative mood."
+            ),
+        )
 
     @classmethod
     def parse_options(cls, options):
@@ -103,6 +116,7 @@ class pep257Checker:
             if options.ignore_decorators
             else None
         )
+        cls.property_decorators = options.property_decorators
 
     def _call_check_source(self):
         try:
@@ -110,6 +124,7 @@ class pep257Checker:
                 self.source,
                 self.filename,
                 ignore_decorators=self.ignore_decorators,
+                property_decorators=self.property_decorators,
                 ignore_inline_noqa=True,
             )
         except TypeError:  # for versions of pydocstyle 5.1.1 and below
@@ -117,6 +132,7 @@ class pep257Checker:
                 self.source,
                 self.filename,
                 ignore_decorators=self.ignore_decorators,
+                property_decorators=self.property_decorators,
             )
 
     def _check_source(self):
